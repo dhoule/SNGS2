@@ -17,6 +17,7 @@ static void usage(char *argv0)
     fprintf(stderr, params, argv0);
     exit(-1);
 }
+
 int main(int argc, char** argv)
 {
 	double	seconds;

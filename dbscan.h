@@ -4,7 +4,6 @@
 #define _DBSCAN_
 
 
-
 #include "utils.h"
 
 #include "clusters.h"
