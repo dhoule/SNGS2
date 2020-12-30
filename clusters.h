@@ -21,20 +21,24 @@
 /*   Storage and Analysis (Supercomputing, SC'12), pp.62:1-62:11, 2012.      */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+
 #ifndef _CLUSTER_
 #define _CLUSTER_
 
 #include "utils.h"
 #include "kdtree2.hpp"
 
-namespace NWUClustering {
-  struct Points {
+namespace NWUClustering
+{
+  struct Points
+  {
     array2dfloat m_points;
     int m_i_dims;
     int m_i_num_points;
   };
 
-  class Clusters {
+  class Clusters
+  {
   public:
     Clusters():m_pts(NULL),m_kdtree(NULL){ }
     virtual ~Clusters();
