@@ -3,14 +3,13 @@
 #include "dbscan.h"
 #include "utils.h"
 #include "kdtree2.hpp"
-
 static void usage(char *argv0) {
   const char *params =
     "Usage: %s [switches] -i filename -b -m minpts -n seeds -e epsilon -o output -t threads\n"
     " -i filename : file containing input data to be clustered\n"
     " -b    : input file is in binary format (default no)\n"
     " -m minpts : input parameter of DBSCAN, min points to form a cluster, e.g. 2\n"
-    " -n seeds    : input parameter of Sow-n-Grow, number of seeds to be chosen from each partition of data\n"
+    "   -n seeds    : input parameter of Sow-n-Grow, number of seeds to be chosen from each partition of data\n"
     " -e epsilon  : input parameter of DBSCAN, radius or threshold on neighbourhoods retrieved, e.g. 0.8\n"
     " -o output : clustering results, format, (each line, point id, clusterid)\n"
     " -t threads  : number of threads to be employed\n\n";
@@ -75,49 +74,25 @@ int main(int argc, char** argv) {
     usage(argv[0]);
     exit(-1);
   }
+
   omp_set_num_threads(threads);
   NWUClustering::ClusteringAlgo dbs;
-  cout << "Input parameters " << " MinPts " << minPts << " Epsilon " << eps << endl;
-  double start;
-  cout << "Dataset used: " << infilename << endl;
-  ofstream outputfile;
-  outputfile.open("runs.txt");
-  double time;
-
   dbs.set_dbscan_params(eps, minPts, seeds);
   if(dbs.read_file(infilename, isBinaryFile) == -1)
     exit(-1);
 
-  cout << "Dimensions of each point: " << dbs.m_pts->m_i_dims << endl;
+  cout << "Input parameters " << " minPts " << minPts << " eps " << eps << endl;
+  double start;
+  cout << "Dataset used: " << infilename << endl;
+  ofstream outputfile;
+  outputfile.open("runs.txt");
+
   dbs.build_kdtree();
   start = omp_get_wtime();
   run_dbscan_algo_uf(dbs);
-  time = omp_get_wtime() - start;
-  outputfile << "DBSCAN (total) took " << time << " seconds." << endl;
-  cout << "DBSCAN (total) took " << time << " seconds." << endl;
+  cout << "DBSCAN (total) took " << omp_get_wtime() - start << " seconds." << endl;
   dbs.writeClusters_uf(outputfile);
   outputfile << endl;
-  
-  // For testing purposes only, please ignore
-  /*for(int n=100; n<15001; n=n+100){
-    seeds = n;
-    //omp_set_num_threads(threads);
-    NWUClustering::ClusteringAlgo dbs;
-    cout << "***** SEEDS = " << n << " *****" << endl;
-    outputfile << "****** SEEDS = " << n << endl;
-
-    dbs.set_dbscan_params(eps, minPts, seeds);
-    if(dbs.read_file(infilename, isBinaryFile) == -1)
-      exit(-1);
-    dbs.build_kdtree();
-    start = omp_get_wtime();
-    run_dbscan_algo_uf(dbs);
-    time = omp_get_wtime() - start;
-    outputfile << "DBSCAN (total) took " << time << " seconds." << endl;
-    dbs.writeClusters_uf(outputfile);
-    outputfile << endl;
-
-  }*/
 
   outputfile.close();
   /*if(outfilename != NULL)
