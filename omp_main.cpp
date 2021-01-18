@@ -84,6 +84,7 @@ int main(int argc, char** argv) {
   cout << "Input parameters " << " minPts " << minPts << " eps " << eps << endl;
   double start;
   cout << "Dataset used: " << infilename << endl;
+  cout << "Dimensions of each point: " << dbs.m_pts->m_i_dims << endl;
   ofstream outputfile;
   outputfile.open("runs.txt");
 
