@@ -28,6 +28,7 @@
 namespace NWUClustering {
 
   Clusters::~Clusters() {
+    
     if(m_pts) {
       m_pts->m_points.clear();
       delete m_pts;
@@ -47,32 +48,34 @@ namespace NWUClustering {
 
     if(isBinaryFile == 1) {
       ifstream file (infilename, ios::in|ios::binary);
-    
       if(file.is_open()) {
         file.read((char*)&num_points, sizeof(int));
         file.read((char*)&dims, sizeof(int));
-        
+            
+        // cout << "Points " << num_points << " dims " << dims << endl;
+
         // allocate memory for points
         m_pts = new Points;       
 
         m_pts->m_i_dims = dims;
         m_pts->m_i_num_points = num_points;
-          
+        
         //allocate memory for the points
         m_pts->m_points.resize(num_points);
         for(int ll = 0; ll < num_points; ll++)
           m_pts->m_points[ll].resize(dims);
 
+        
         point_coord_type* pt;         
         pt = (point_coord_type*) malloc(dims * sizeof(point_coord_type));
-                          
+                        
         for (i = 0; i < num_points; i++) {
           file.read((char*)pt, dims*sizeof(point_coord_type));
         
           for (j = 0; j < dims; j++)
             m_pts->m_points[i][j] = pt[j];
         }
-        
+      
         delete [] pt; 
         file.close();
       } else {
@@ -104,7 +107,9 @@ namespace NWUClustering {
           num_points++;
           getline(file, line);
         }
-                           
+        
+        // cout << "Points " << num_points << " dimensions " << dims << endl;
+                               
         // allocate memory for points
         m_pts = new Points;
         m_pts->m_points.resize(num_points);
@@ -122,8 +127,10 @@ namespace NWUClustering {
           if(line.length() == 0)
             continue;
 
+          //cout << line << endl;
           ss.clear();
           ss << line;
+
           j = 0;
           while(ss >> buf && j < dims) { // get the corordinate of the points
             m_pts->m_points[i][j] = atof(buf.c_str());
@@ -148,6 +155,7 @@ namespace NWUClustering {
   }
 
   int Clusters::build_kdtree() {
+
     if(m_pts == NULL) {
       cout << "Point set is empty" << endl;
       return -1;

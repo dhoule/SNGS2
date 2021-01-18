@@ -50,8 +50,7 @@ float kdtree2_result_vector::max_value() {
   return( (*begin()).dis ); // very first element
 }
 
-void kdtree2_result_vector::
-push_element_and_heapify(kdtree2_result& e) {
+void kdtree2_result_vector::push_element_and_heapify(kdtree2_result& e) {
   push_back(e); // what a vector does.
   push_heap( begin(), end() ); // and now heapify it, with the new elt.
 }
@@ -76,8 +75,8 @@ float kdtree2_result_vector::replace_maxpri_elt_return_new_maxpri(kdtree2_result
 // constructor
 kdtree2::kdtree2(array2dfloat& data_in,bool rearrange_in,int dim_in)
   : the_data(data_in),
-//    N  ( data_in.shape()[0] ),
-//    dim( data_in.shape()[1] ),
+  //    N  ( data_in.shape()[0] ),
+  //    dim( data_in.shape()[1] ),
     N (data_in.size()), //N  ( data_in.shape()[0] ),
     dim (data_in[0].size()), //dim( data_in.shape()[1] ),
     sort_results(false),
@@ -91,7 +90,6 @@ kdtree2::kdtree2(array2dfloat& data_in,bool rearrange_in,int dim_in)
   not_regular_median = 0;
   regular_median = 0;
   #endif
- 
 
   //
   // initialize the constant references using this unusual C++
@@ -99,7 +97,7 @@ kdtree2::kdtree2(array2dfloat& data_in,bool rearrange_in,int dim_in)
   //
   if (dim_in > 0) 
     dim = dim_in;
- 
+
   // cout << "building kd tree" << endl;
   build_tree();
   //cout << "building kd tree" << endl;
@@ -107,7 +105,7 @@ kdtree2::kdtree2(array2dfloat& data_in,bool rearrange_in,int dim_in)
   if (rearrange) {
     // if we have a rearranged tree.
     // allocate the memory for it. 
-    
+  
 
     //printf("rearranging\n"); 
     
@@ -116,7 +114,6 @@ kdtree2::kdtree2(array2dfloat& data_in,bool rearrange_in,int dim_in)
     for(int ll = 0; ll < N; ll++)
       rearranged_data[ll].resize(dim);   
 
- 
     // permute the data for it.
     for (int i=0; i<N; i++) {
       for (int j=0; j<dim; j++) {
@@ -147,7 +144,6 @@ void kdtree2::build_tree() {
    // #ifdef _DEBUG
    // cout << "regular_median_total " << regular_median << " not_regular_median_total " << not_regular_median << endl;
    // #endif
- 
 }
 
 kdtree2_node* kdtree2::build_tree_for_range(int l, int u, kdtree2_node* parent) {
@@ -173,8 +169,6 @@ kdtree2_node* kdtree2::build_tree_for_range(int l, int u, kdtree2_node* parent) 
     node->l = l;
     node->u = u;
     node->left = node->right = NULL;
-    
-
   } else {
     //
     // Compute an APPROXIMATE bounding box for this node.
@@ -208,10 +202,10 @@ kdtree2_node* kdtree2::build_tree_for_range(int l, int u, kdtree2_node* parent) 
     //
 
     //cout << "c " << c << endl;
-      
+    
     if (false) {
-        m = (l+u)/2;
-        select_on_coordinate(c,m,l,u);  
+      m = (l+u)/2;
+      select_on_coordinate(c,m,l,u);  
     } else {
       
       float sum; 
@@ -224,7 +218,6 @@ kdtree2_node* kdtree2::build_tree_for_range(int l, int u, kdtree2_node* parent) 
           sum += the_data[ind[k]][c];
         }
         average = sum / static_cast<float> (u-l+1);
-   
       } else {
         // average of top and bottom nodes.
         average = (node->box[c].upper + node->box[c].lower)*0.5; 
@@ -274,7 +267,7 @@ kdtree2_node* kdtree2::build_tree_for_range(int l, int u, kdtree2_node* parent) 
     if (node->right == NULL) {
       for (int i=0; i<dim; i++) 
         node->box[i] = node->left->box[i]; 
-      
+       
       node->cut_val = node->left->box[c].upper;
       node->cut_val_left = node->cut_val_right = node->cut_val;
     } else if (node->left == NULL) {
@@ -304,7 +297,7 @@ kdtree2_node* kdtree2::build_tree_for_range(int l, int u, kdtree2_node* parent) 
 }
 
 
-void kdtree2:: spread_in_coordinate(int c, int l, int u, interval& interv) {
+void kdtree2::spread_in_coordinate(int c, int l, int u, interval& interv) {
   // return the minimum and maximum of the indexed data between l and u in
   // smin_out and smax_out.
   float smin, smax;
@@ -327,14 +320,20 @@ void kdtree2:: spread_in_coordinate(int c, int l, int u, interval& interv) {
       //      lmax = t;
     }
 
-    if (smin > lmin) smin = lmin;
-    if (smax <lmax) smax = lmax;
+    if (smin > lmin) 
+      smin = lmin;
+
+    if (smax <lmax) 
+      smax = lmax;
   }
   // is there one more element? 
   if (i == u+1) {
     float last = the_data[ind[u]] [c];
-    if (smin>last) smin = last;
-    if (smax<last) smax = last;
+    if (smin>last) 
+      smin = last;
+
+    if (smax<last) 
+      smax = last;
   }
   interv.lower = smin;
   interv.upper = smax;
@@ -361,6 +360,7 @@ void kdtree2::select_on_coordinate(int c, int k, int l, int u) {
 
     if (m <= k) 
       l = m+1;
+
     if (m >= k) 
       u = m-1;
   } // while loop
@@ -389,7 +389,6 @@ int kdtree2::select_on_coordinate_value(int c, float alpha, int l, int u) {
     return(lb);
   else
     return(lb-1);
-  
 }
 
 
@@ -450,8 +449,7 @@ class searchrecord {
     // constructor
 
   public:
-    searchrecord(vector<float>& qv_in, kdtree2& tree_in,
-           kdtree2_result_vector& result_in) :  
+    searchrecord(vector<float>& qv_in, kdtree2& tree_in, kdtree2_result_vector& result_in) :  
       qv(qv_in),
       result(result_in),
       data(tree_in.data),
@@ -497,7 +495,6 @@ void kdtree2::n_nearest(vector<float>& qv, int nn, kdtree2_result_vector& result
 
   if (sort_results) 
     sort(result.begin(), result.end());
-  
 }
 
 // search for n nearest to a given query vector 'qv'.
@@ -627,8 +624,11 @@ kdtree2_node::kdtree2_node(int dim) : box(dim) {
 
 // destructor
 kdtree2_node::~kdtree2_node() {
-  if (left != NULL) delete left; 
-  if (right != NULL) delete right; 
+  if (left != NULL) 
+    delete left; 
+
+  if (right != NULL) 
+    delete right; 
   // maxbox and minbox 
   // will be automatically deleted in their own destructors. 
 }
@@ -812,7 +812,7 @@ void kdtree2_node::process_terminal_node(searchrecord& sr) {
       e.dis = dis;
       ballsize = sr.result.replace_maxpri_elt_return_new_maxpri(e); 
       if (debug) {
-        cout << "Replaced maximum dis with dis=" << dis << " new ballsize =" << ballsize << '\n';
+        cout << "Replaced maximum dis with dis=" << dis <<  " new ballsize =" << ballsize << '\n';
       }
     }
   } // main loop
